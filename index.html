@@ -1,40 +1,577 @@
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>reveal.js</title>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<link rel="stylesheet" href="dist/reset.css">
-		<link rel="stylesheet" href="dist/reveal.css">
-		<link rel="stylesheet" href="dist/theme/black.css">
+	<title>reveal.js</title>
 
-		<!-- Theme used for syntax highlighted code -->
-		<link rel="stylesheet" href="plugin/highlight/monokai.css">
-	</head>
-	<body>
-		<div class="reveal">
-			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
-			</div>
+	<link rel="stylesheet" href="dist/reset.css">
+	<link rel="stylesheet" href="dist/reveal.css">
+	<link rel="stylesheet" href="dist/theme/black.css">
+
+	<!-- Theme used for syntax highlighted code -->
+	<link rel="stylesheet" href="plugin/highlight/monokai.css">
+</head>
+
+<body>
+	<div class="reveal">
+		<div class="slides">
+			<!-- Folie 1: Titel -->
+			<section>
+				<h1 class="r-fit-text">SOLID</h1>
+				<h2 class="r-fit-text">Software Prinzipien für besseren Code</h2>
+			</section>
+
+			<!-- Folie 2: Einleitung -->
+			<section>
+				<h2>Was sind die SOLID Prinzipien?</h2>
+				<ul>
+					<li>
+						Akronym: SRP, OCP, LSP, ISP, DIP
+					</li>
+					<li>
+						Entwickelt von Robert C. Martin
+					</li>
+					<li>
+						Entwicklungsrichtlinien zur Verbesserung der Softwarequalität
+					</li>
+				</ul>
+
+
+				<aside class="notes">
+					Das Akronym SOLID steht für fünf grundlegende Prinzipien:
+					<ul>
+						<li>Single Responsibility Principle (SRP)</li>
+						<li>das Open-Closed Principle (OCP)</li>
+						<li>Liskov Substitution Principle (LSP)</li>
+						<li>Interface Segregation Principle (ISP)</li>
+						<li>Dependency Inversion Principle(DIP)</li>
+					</ul>
+
+					Entwickelt von Robert C. Martin: Diese Prinzipien wurden von Robert C. Martin entwickelt, einem
+					Pionier in der Softwareentwicklung.
+
+					<br />
+					Diese Prinzipien bieten uns Leitlinien, um unseren Code qualitativ hochwertiger und effizienter zu
+					gestalten.
+				</aside>
+			</section>
+
+			<!-- Folie 3: SRP -->
+			<section>
+				<section>
+					<h2>Single Responsibility Principle (SRP)</h2>
+				</section>
+				<section>
+					<h2>Definition</h2>
+					<p>
+						Das Single Responsibility Principle (SRP) besagt, dass eine Klasse nur eine einzige
+						Verantwortung haben sollte. Das heißt die Klasse sollte nur einen Grund sich zu ändern.
+					</p>
+				</section>
+				<section data-auto-animate>
+					<pre data-id="code-animation">
+						<code data-trim data-line-numbers>
+							public class Customer
+							{
+								public int Id { get; set; }
+								public string Name { get; set; }
+								public string Email { get; set; }
+							}
+						</code>
+					</pre>
+				</section>
+				<section data-auto-animate>
+					<pre data-id="code-animation">
+						<code data-trim data-line-numbers="7-15">
+							public class Customer
+							{
+								public int Id { get; set; }
+								public string Name { get; set; }
+								public string Email { get; set; }
+
+								public void Save() 
+								{ 
+									/* Save to database */
+								}
+
+								public void Delete() 
+								{ 
+									/* Delete from database */
+								}
+							}
+						</code>
+					</pre>
+				</section>
+				<section data-auto-animate>
+					<pre data-id="code-animation">
+						<code data-trim data-line-numbers="18-20">
+							public class Customer
+							{
+								public int Id { get; set; }
+								public string Name { get; set; }
+								public string Email { get; set; }
+								public RewardLevel Level { get; set; }
+
+								public void Save() 
+								{ 
+									/* Save to database */
+								}
+
+								public void Delete() 
+								{ 
+									/* Delete from database */
+								}
+								
+								public void SendEmail(string message) { 
+									/* Send email to customer */ 
+								}
+							}
+						</code>
+					</pre>
+				</section>
+				<section data-auto-animate>
+					<h3>3 Zuständigkeiten</h3>
+					<pre data-id="code-animation">
+						<code data-trim data-line-numbers="3-6|8-9|10">
+							public class Customer
+							{
+								public int Id { get; set; }
+								public string Name { get; set; }
+								public string Email { get; set; }
+								public RewardLevel Level { get; set; }
+
+								public void Save() { /**/ }
+								public void Delete() { /**/ }
+								public void SendEmail(string message) { /**/ }
+							}
+						</code>
+					</pre>
+				</section>
+				<section data-auto-animate>
+					<pre data-id="code-animation">
+						<code data-trim data-line-numbers="1-8|10-22|24-31">
+							// single responsibility - storing customer information
+							public class Customer
+							{
+								public int Id { get; set; }
+								public string Name { get; set; }
+								public string Email { get; set; }
+								public RewardLevel Level { get; set; }
+							}
+
+							// single responsibility - storing and retrieving from database
+							public class CustomerRepository
+							{
+								public void Save(Customer customer)
+								{
+									/* Save to database */
+								}
+								
+								public void Delete(Customer customer)
+								{
+									/* Delete from database */
+								}
+							}
+
+							// single responsibility - sending email notifications
+							public class EmailNotifier
+							{
+								public void SendEmail(Customer customer, string message)
+								{
+									/* Send email to customer */ 
+								}
+							}
+						</code>
+					</pre>
+				</section>
+			</section>
+
+			<!-- Folie 4: OCP -->
+			<section>
+				<section>
+					<h2>Open-Closed Principle (OCP)</h2>
+				</section>
+				<section>
+					<h2>Definition</h2>
+					<p>
+						Das Open-Closed Principle (OCP) besagt, dass Klassen offen für Erweiterungen, aber geschlossen
+						für Änderungen sein sollten.
+					</p>
+				</section>
+				<section data-auto-animate>
+					<pre data-id="code-animation">
+						<code data-trim data-line-numbers>
+							public class CustomerRepository
+							{
+								public void Save(Customer customer)
+								{
+									/* Save to database */
+								}
+							}
+						</code>
+					</pre>
+				</section>
+				<section data-auto-animate>
+					<pre data-id="code-animation">
+						<code data-trim data-line-numbers="8-11">
+							public class CustomerRepository
+							{
+								public void Save(Customer customer)
+								{
+									/* Save to database */
+								}
+								
+								public void SaveToFile(Customer customer)
+								{
+									/* Save to csv file */
+								}
+							}
+						</code>
+					</pre>
+				</section>
+				<section data-auto-animate>
+					<pre data-id="code-animation">
+						<code data-trim data-line-numbers="13-16">
+							public class CustomerRepository
+							{
+								public void Save(Customer customer)
+								{
+									/* Save to database */
+								}
+								
+								public void SaveToFile(Customer customer)
+								{
+									/* Save to csv file */
+								}
+								
+								public void SaveToJsonFile(Customer customer)
+								{
+									/* Save to JSON file */
+								}
+							}
+						</code>
+					</pre>
+
+					<aside class="notes">
+						Das führt zu einem Bruch dieses Prinzips weil um neue Funktionalität hinzuzufügen muss die
+						Klasse geändert werden
+					</aside>
+				</section>
+				<section data-auto-animate>
+					<pre data-id="code-animation">
+						<code data-trim data-line-numbers>
+							public interface ICustomerRepository
+							{
+								void Save(Customer customer);
+							}
+						</code>
+					</pre>
+				</section>
+				<section data-auto-animate>
+					<pre data-id="code-animation">
+						<code data-trim data-line-numbers="6-12">
+							public interface ICustomerRepository
+							{
+								void Save(Customer customer);
+							}
+
+							public class DBCustomerRepository : ICustomerRepository 
+							{
+								public void Save(Customer customer) 
+								{
+									/* Save to database */
+								}
+							}
+						</code>
+					</pre>
+				</section>
+				<section data-auto-animate>
+					<pre data-id="code-animation">
+						<code data-trim data-line-numbers="14-20">
+							public interface ICustomerRepository
+							{
+								void Save(Customer customer);
+							}
+
+							public class DBCustomerRepository : ICustomerRepository 
+							{
+								public void Save(Customer customer) 
+								{
+									/* Save to database */
+								}
+							}
+							
+							public class FileCustomerRepository : ICustomerRepository 
+							{
+								public void Save(Customer customer) 
+								{
+									/* Save to file */
+								}
+							}
+						</code>
+					</pre>
+				</section>
+			</section>
+
+			<!-- Folie 5: LSP -->
+			<section>
+				<section>
+					<h2>Liskov Substitution Principle (LSP)</h2>
+				</section>
+				<section>
+					<h2>Definition</h2>
+					<p>
+						Das Liskov Substitution Principle (LSP) besagt, dass Objekte einer abgeleiteten Klasse in jedem
+						Kontext genauso verwendet werden sollten wie Objekte der Basis (übergeordneten) Klasse, ohne
+						unerwünschte Nebeneffekte oder Verhalten zu erzeugen.
+					</p>
+				</section>
+				<section data-auto-animate>
+					<pre data-id="code-animation">
+						<code data-trim data-line-numbers="1-9|11-12">
+							public abstract class Bird { 
+								public abstract void Fly();
+							}
+
+							public class Dove : Bird { 
+								public override void Fly() { 
+									Console.WriteLine("I am a flying Dove")
+								} 
+							}
+
+							var dove = new Dove();
+							dove.Fly();
+						</code>
+					</pre>
+				</section>
+				<section data-auto-animate>
+					<pre data-id="code-animation">
+						<code data-trim data-line-numbers="11-15|20-21">
+							public abstract class Bird { 
+								public abstract void Fly();
+							}
+
+							public class Dove : Bird { 
+								public override void Fly() { 
+									Console.WriteLine("I am a flying Dove")
+								} 
+							}
+
+							public class Penguin : Bird { 
+								public override void Fly() { 
+									throw new Exception("Penguins can't fly")
+								} 
+							}
+
+							var dove = new Dove();
+							dove.Fly();
+
+							var penguin = new Penguin();
+							penguin.Fly(); // <-- Causes runtime exception
+						</code>
+					</pre>
+				</section>
+			</section>
+
+			<!-- Folie 6: ISP -->
+			<section>
+				<section>
+					<h2>Interface Segregation Principle (ISP)</h2>
+				</section>
+				<section>
+					<h2>Definition</h2>
+					<p>
+						Das Interface Segregation Principle (ISP) besagt, dass keine Klasse gezwungen sein sollte,
+						Methoden zu implementieren, die sie nicht benötigt.
+					</p>
+				</section>
+				<section data-auto-animate>
+					<pre data-id="code-animation">
+						<code data-trim data-line-numbers>
+							interface IHuman
+							{
+								void Eat();
+								void Sleep();
+								void Work();
+								void DrinkCoffee();
+							}
+						</code>
+					</pre>
+				</section>
+				<section data-auto-animate>
+					<pre data-id="code-animation">
+						<code data-trim data-line-numbers="9-14">
+							interface IHuman
+							{
+								void Eat();
+								void Sleep();
+								void Work();
+								void DrinkCoffee();
+							}
+
+							class Adult : IHuman {
+								void Eat() { /**/ }
+								void Sleep() { /**/ }
+								void Work() { /**/ }
+								void DrinkCoffee() { /**/ }
+							}
+						</code>
+					</pre>
+				</section>
+				<section data-auto-animate>
+					<pre data-id="code-animation">
+						<code data-trim data-line-numbers="16-21">
+							interface IHuman
+							{
+								void Eat();
+								void Sleep();
+								void Work();
+								void DrinkCoffee();
+							}
+
+							class Adult : IHuman {
+								void Eat() { /**/ }
+								void Sleep() { /**/ }
+								void Work() { /**/ }
+								void DrinkCoffee() { /**/ }
+							}
+							
+							class Baby : IHuman {
+								void Eat() { /**/ }
+								void Sleep() { /**/ }
+								void Work() => throw new NotImplementedException();
+								void DrinkCoffee() => throw new NotImplementedException();
+							}
+						</code>
+					</pre>
+
+					<aside class="notes">
+						Die Klasse Baby muss alle methoden implementieren. Manche kann sie garnicht was auch zu einem
+						Verstoß gegen das Liskov substitution principle führt.
+					</aside>
+				</section>
+				<section data-auto-animate>
+					<pre data-id="code-animation">
+						<code data-trim data-line-numbers="1-4|6-9|11-14|16-19|21|28">
+							interface IEater
+							{
+								void Eat();
+							}
+
+							interface ISleeper
+							{
+								void Work();
+							}
+
+							interface IWorker
+							{
+								void Work();
+							}
+
+							interface ICoffeeDrinker
+							{
+								void DrinkCoffee();
+							}
+
+							class Adult : IEater, ISleeper, IWorker, ICoffeeDrinker {
+								void Eat() { /**/ }
+								void Sleep() { /**/ }
+								void Work() { /**/ }
+								void DrinkCoffee() { /**/ }
+							}
+							
+							class Baby : IEater, ISleeper {
+								void Eat() { /**/ }
+								void Sleep() { /**/ }
+							}
+						</code>
+					</pre>
+				</section>
+			</section>
+
+			<!-- Folie 7: DIP -->
+			<section>
+				<section>
+					<h2>Dependency Inversion Principle (DIP)</h2>
+				</section>
+				<section>
+					<h2>Definition</h2>
+					<p>
+						Das Dependency Inversion Principle (DIP) besagt, dass High-Level-Module nicht von
+						Low-Level-Modulen abhängig sein sollten. Beide sollten stattdessen von abstrakten Schnittstellen
+						abhängig sein.
+					</p>
+				</section>
+				<section data-auto-animate>
+					<pre data-id="code-animation">
+						<code data-trim data-line-numbers="1-3|5-9">
+							class FileLogger { 
+								void Log(string message) { /**/ }
+							}
+
+							class CustomerService
+							{
+								private readonly FileLogger _logger;
+								public CustomerService(FileLogger logger) { _logger = logger; }
+							}
+						</code>
+					</pre>
+				</section>
+
+				<section data-auto-animate>
+					<pre data-id="code-animation">
+						<code data-trim data-line-numbers="1|2-4|6-10">
+							interface ILogger { void Log(string message); }
+							class FileLogger : ILogger { 
+								void Log(string message) { /**/ } 
+							}
+							
+							class CustomerService
+							{
+								private readonly ILogger _logger;
+								public CustomerService(ILogger logger) { _logger = logger; }
+							}
+						</code>
+					</pre>
+				</section>
+			</section>
+
+			<!-- Folie 8: Warum sind die SOLID-Prinzipien wichtig? -->
+			<section>
+				<h2>Warum sind die SOLID-Prinzipien wichtig?</h2>
+				<ul>
+					<li>Verbesserung der Wartbarkeit</li>
+					<li>Erleichterte Erweiterbarkeit</li>
+					<li>Reduzierung von Code-Duplizierung</li>
+					<li>Vereinfachung der Tests</li>
+				</ul>
+			</section>
+
+			<!-- Folie 9: Fragen und Diskussion -->
+			<section>
+				<h2>Fragen?</h2>
+			</section>
 		</div>
+	</div>
 
-		<script src="dist/reveal.js"></script>
-		<script src="plugin/notes/notes.js"></script>
-		<script src="plugin/markdown/markdown.js"></script>
-		<script src="plugin/highlight/highlight.js"></script>
-		<script>
-			// More info about initialization & config:
-			// - https://revealjs.com/initialization/
-			// - https://revealjs.com/config/
-			Reveal.initialize({
-				hash: true,
+	<script src="dist/reveal.js"></script>
+	<script src="plugin/notes/notes.js"></script>
+	<script src="plugin/markdown/markdown.js"></script>
+	<script src="plugin/highlight/highlight.js"></script>
+	<script>
+		// More info about initialization & config:
+		// - https://revealjs.com/initialization/
+		// - https://revealjs.com/config/
+		Reveal.initialize({
+			hash: true,
 
-				// Learn about plugins: https://revealjs.com/plugins/
-				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
-			});
-		</script>
-	</body>
+			// Learn about plugins: https://revealjs.com/plugins/
+			plugins: [RevealMarkdown, RevealHighlight, RevealNotes]
+		});
+	</script>
+</body>
+
 </html>
